@@ -2,6 +2,7 @@
     "name": "kerim/basedb",
     "description": "Simple PDO database library.",
     "type": "library",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Kerim\\Basedb\\": "src/"
