@@ -1,0 +1,17 @@
+{
+    "name": "kerim/basedb",
+    "description": "Simple PDO database library.",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Kerim\\Basedb\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Kerim Ay",
+            "email": "aykerim0505@gmail.com"
+        }
+    ],
+    "require": {}
+}
