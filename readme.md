@@ -21,6 +21,7 @@ BaseDB::method();
 - [all()](#all)
 - [insert()](#insert)
 - [update()](#update)
+- [delete()](#delete)
 
 ### Connect
 ```php
@@ -75,4 +76,12 @@ use Kerim\Basedb\BaseDB;
 BaseDB::table("table")::where(["key" => "value"])::update([
     "key" => "changed_value",
 ])
+```
+
+### Delete
+```php
+use Kerim\Basedb\BaseDB;
+BaseDB::table("table")::where(["key" => "value"])::delete();
+/*** OR ***/
+BaseDB::table("table")::delete();
 ```

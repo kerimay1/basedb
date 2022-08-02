@@ -64,7 +64,7 @@ class BaseDB {
             }
         }
         self::$where = $w;
-        self::$whereData = $where;
+        self::$whereData = array_map("strval", $where);
         return new self;
     }
 
@@ -83,10 +83,14 @@ class BaseDB {
 
     public static function one(): array
     {
+        self::$table = "";
         try {
-            $d = self::$connection->prepare(self::$query)->execute(self::$whereData)->fetch(PDO::FETCH_ASSOC);
+            $p = self::$connection->prepare(self::$query);
+            $p->execute(self::$whereData);
+            $d = $p->fetch(PDO::FETCH_ASSOC);
             self::$query = "";
             self::$where = "";
+            self::$whereData = [];
             return $d;
         } catch (\PDOException $e) {
             self::showError($e);
@@ -96,10 +100,14 @@ class BaseDB {
 
     public static function all(): array
     {
+        self::$table = "";
         try {
-            $d = self::$connection->prepare(self::$query)->execute(self::$whereData)->fetchAll(PDO::FETCH_ASSOC);
+            $p = self::$connection->prepare(self::$query);
+            $p->execute(self::$whereData);
+            $d = $p->fetchAll(PDO::FETCH_ASSOC);
             self::$query = "";
             self::$where = "";
+            self::$whereData = [];
             return $d;
         } catch (\PDOException $e) {
             self::showError($e);
@@ -111,6 +119,7 @@ class BaseDB {
     {
         self::$query = "INSERT INTO " . self::$table . " SET ";
         self::c($data);
+        self::$table = "";
         try {
             $i = self::$connection->prepare(self::$query)->execute(array_merge($data, self::$whereData));
             self::$query = "";
@@ -129,7 +138,9 @@ class BaseDB {
         self::$query = "UPDATE " . self::$table . " SET ";
         self::c($data);
         self::$query .= " WHERE " . self::$where;
+        self::$table = "";
         self::$where = "";
+        self::$whereData = [];
         try {
             $u = self::$connection->prepare(self::$query)->execute(array_merge($data, self::$whereData));
             self::$query = "";
@@ -139,5 +150,23 @@ class BaseDB {
         }
         self::$query = "";
         return false;
+    }
+
+    public static function delete(): int
+    {
+        if (self::$where) {
+            self::$query = "DELETE FROM " . self::$table . " WHERE " . self::$where;
+            $p = self::$connection->prepare(self::$query);
+            $p->execute(self::$whereData);
+            $u = $p->rowCount();
+        } else {
+            self::$query = "DELETE FROM " . self::$table;
+            $u = self::$connection->query(self::$query)->rowCount();
+        }
+        self::$table = "";
+        self::$query = "";
+        self::$where = "";
+        self::$whereData = [];
+        return $u;
     }
 }
